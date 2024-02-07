@@ -13,6 +13,8 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
         builder.WithOrigins("https://localhost:3000/");
     }));
 
+builder.Services.AddScoped<ApplicationDbContext>();
+
 var app = builder.Build();
 
 app.UseDefaultFiles();

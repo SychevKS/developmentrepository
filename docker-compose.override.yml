@@ -1,14 +1,42 @@
 version: '3.4'
 
+networks:
+  repo:
+    driver: bridge
+
 services:
   developmentrepository.server:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=dev_repo;Username=postgres;Password=password
     ports:
-      - "8080"
-      - "8081"
+      - "5000:8080"
+      - "5001:8081"
+    networks:
+      - repo
+    depends_on:
+      - postgres_db
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - files_volume:/app/files 
+
+  postgres_db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: development_repository
+    ports:
+      - "5436:5432"
+    networks:
+      - repo
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+  files_volume:  

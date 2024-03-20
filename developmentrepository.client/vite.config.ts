@@ -55,14 +55,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@root': path.resolve(__dirname, './src'),
     },
   },
   server: {
     proxy: {
-      '^/weatherforecast': {
-        target: 'https://localhost:7155/',
-        secure: false,
-      },
+      '/api': { target: 'https://localhost:5001/', secure: false },
     },
     port: 5173,
     https: {

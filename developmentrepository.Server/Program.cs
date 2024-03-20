@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
     builder =>
     {
-        builder.WithOrigins("https://localhost:3000/");
+        builder.WithOrigins("https://localhost:5173/");
     }));
 
 builder.Services.AddScoped<ApplicationDbContext>();

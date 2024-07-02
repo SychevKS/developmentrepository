@@ -13,6 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.5.2" />
+    <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.5.2" />
+    <PackageReference Include="Keycloak.AuthServices.Common" Version="2.5.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>8.*-*</Version>
     </PackageReference>

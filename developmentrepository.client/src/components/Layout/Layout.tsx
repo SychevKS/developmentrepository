@@ -1,15 +1,12 @@
-import { UserOutlined } from '@ant-design/icons'
-import { Layout as BaseLayout, Menu, theme } from 'antd'
-import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { FileTextOutlined } from '@ant-design/icons';
+import { Link, Outlet } from '@tanstack/react-router';
+import { Layout as BaseLayout, Menu } from 'antd';
+import React, { useState } from 'react';
 
-const { Content, Sider } = BaseLayout
+const { Content, Sider } = BaseLayout;
 
 export function Layout() {
-  const [collapsed, setCollapsed] = useState(false)
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken()
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <BaseLayout style={{ minHeight: '100vh' }}>
@@ -26,8 +23,12 @@ export function Layout() {
           items={[
             {
               key: 1,
-              icon: React.createElement(UserOutlined),
-              label: `Темы`,
+              icon: React.createElement(FileTextOutlined),
+              label: (
+                <Link to={'/'} activeOptions={{ exact: true }}>
+                  Темы
+                </Link>
+              ),
             },
           ]}
         />
@@ -37,16 +38,12 @@ export function Layout() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            margin: '20px',
-            marginLeft: '45px',
-            padding: '10px',
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
+            margin: '25px 50px',
           }}
         >
           <Outlet />
         </Content>
       </BaseLayout>
     </BaseLayout>
-  )
+  );
 }

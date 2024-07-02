@@ -1,9 +1,8 @@
+using Keycloak.AuthServices.Authentication;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -14,6 +13,10 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
     }));
 
 builder.Services.AddScoped<ApplicationDbContext>();
+
+var config = builder.Configuration;
+
+builder.Services.AddKeycloakWebApiAuthentication(config.GetSection(KeycloakAuthenticationOptions.Section));
 
 var app = builder.Build();
 
@@ -31,9 +34,10 @@ app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.MapFallbackToFile("/index.html");
 

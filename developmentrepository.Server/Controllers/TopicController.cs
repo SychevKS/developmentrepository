@@ -1,7 +1,7 @@
 namespace developmentrepository.Server.Controllers;
 
 using developmentrepository.Server.Models;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

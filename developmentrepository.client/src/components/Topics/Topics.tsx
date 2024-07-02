@@ -1,14 +1,15 @@
-import { useGetDirectionsByTopic } from '@/hooks'
-import { TopicData } from '@/types'
-import { Collapse, List } from 'antd'
-import { Link, useLoaderData } from 'react-router-dom'
-import TopicAdd from './TopicsAdd'
+import { useGetDirectionsByTopic } from '@/hooks';
+import { topicsQueryOptions } from '@/queryOptions';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Flex, List } from 'antd';
+import { TopicsToolbar } from './TopicsToolbar';
 
 export function Topics() {
-  const { topics } = useLoaderData() as TopicData
-  const directions = useGetDirectionsByTopic()
+  const { data: topics } = useSuspenseQuery(topicsQueryOptions);
 
-  const collapses = (directions.data ?? []).map((direction) => (
+  const directions = useGetDirectionsByTopic();
+
+  /* const collapses = (directions.data ?? []).map((direction) => (
     <Collapse
       key={direction}
       items={[
@@ -33,7 +34,7 @@ export function Topics() {
         },
       ]}
     />
-  ))
+  )); */
 
   return (
     <div
@@ -44,32 +45,30 @@ export function Topics() {
         height: '100%',
       }}
     >
-      <TopicAdd />
-      <div
+      <Flex
+        vertical
+        gap={30}
         style={{
           flex: 1,
           flexBasis: 1,
-
-          display: 'flex',
-          flexDirection: 'column',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            flex: 1,
-            flexBasis: 1,
-            overflowY: 'auto',
-
-            paddingLeft: '10px',
-            paddingRight: '10px',
-            gap: '10px',
-          }}
-        >
-          {collapses}
-        </div>
-      </div>
+        <TopicsToolbar />
+        <Flex style={{ flex: 1, width: '100%' }}>
+          <List
+            size="large"
+            bordered
+            itemLayout="horizontal"
+            dataSource={directions.data}
+            renderItem={(direction) => (
+              <List.Item>
+                <List.Item.Meta title={direction} />
+              </List.Item>
+            )}
+            style={{ width: '100%' }}
+          />
+        </Flex>
+      </Flex>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 const fetchTopics = async (): Promise<string[]> =>
-  fetch(`api/topics/directions`).then((res) => res.json())
+  fetch(`/api/topics/directions`).then((res) => res.json())
 
 export const useGetDirectionsByTopic = () => {
   const query = useQuery({

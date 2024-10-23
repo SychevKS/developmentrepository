@@ -11,7 +11,7 @@ import keycloak from './keycloak';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReactKeycloakProvider
     authClient={keycloak}
-    initOptions={{ onLoad: 'login-required'}}
+    initOptions={{ onLoad: 'login-required' }}
     onTokens={({ token }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }}

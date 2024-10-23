@@ -1,4 +1,8 @@
 using Keycloak.AuthServices.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +20,21 @@ builder.Services.AddScoped<ApplicationDbContext>();
 
 var config = builder.Configuration;
 
-builder.Services.AddKeycloakWebApiAuthentication(config.GetSection(KeycloakAuthenticationOptions.Section));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddKeycloakWebApi(
+    options =>
+    {
+        options.Resource = "client";
+        options.Realm = "developrepository";
+        options.SslRequired = "none";
+        options.AuthServerUrl = "http://keycloak:8080/";
+        options.VerifyTokenAudience = false;
+    },
+    options =>
+    {
+        // Для локального развертывания в докере, так как фронт и бек не могут тыкать в один и тот же внешний keycloak.
+        options.TokenValidationParameters.ValidIssuer = "http://localhost:9001/realms/developrepository";
+    });
 
 var app = builder.Build();
 

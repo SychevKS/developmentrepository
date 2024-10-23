@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const getTopics = async () => {
   const { data } = await axios.get('/api/topics');
+  console.log(data);
   return { topics: data };
 };
 

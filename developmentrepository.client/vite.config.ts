@@ -7,10 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { defineConfig } from 'vite';
 
-const baseFolder =
-  process.env.APPDATA !== undefined && process.env.APPDATA !== ''
-    ? `${process.env.APPDATA}/ASP.NET/https`
-    : `${process.env.HOME}/.aspnet/https`;
+const baseFolder = `/home/app/.aspnet/https`;
 
 const certificateArg = process.argv
   .map((arg) => arg.match(/--name=(?<value>.+)/i))
@@ -60,8 +57,12 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     proxy: {
-      '/api': { target: 'https://localhost:5001/', secure: false },
+      '/api': {
+        target: 'https://developmentrepository.server:8081',
+        secure: false,
+      },
     },
     port: 5173,
     https: {

@@ -1,8 +1,93 @@
 version: '3.4'
 
+networks:
+  repo:
+    driver: bridge
+
 services:
   developmentrepository.server:
     image: ${DOCKER_REGISTRY-}developmentrepositoryserver
     build:
       context: .
       dockerfile: developmentrepository.Server/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=dev_repo;Username=postgres;Password=password
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    networks:
+      - repo
+    depends_on:
+      - postgres_db
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - files_volume:/app/files 
+
+  developmentrepository.client:
+    container_name: developmentrepository.client
+    networks:
+      - repo
+    build:
+      context: .
+      dockerfile: ./developmentrepository.client/Dockerfile
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./developmentrepository.client:/app
+      - /app/node_modules
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  postgres_db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: development_repository
+    ports:
+      - "5436:5432"
+    networks:
+      - repo
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+   
+  keycloak-db:
+    container_name: keycloak-db
+    image: docker.io/bitnami/postgresql:15.3.0
+    networks:
+      - repo
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=bitnami_keycloak
+    volumes:
+      - 'keycloak_db_data:/bitnami/postgresql'
+  
+  keycloak:
+    container_name: keycloak
+    image: docker.io/bitnami/keycloak:22
+    depends_on:
+      - keycloak-db
+    environment:
+      - KEYCLOAK_DATABASE_HOST=keycloak-db
+      - KEYCLOAK_DATABASE_USER=postgres
+      - KEYCLOAK_DATABASE_PASSWORD=postgres
+      - KEYCLOAK_ADMIN_USER=user
+      - KEYCLOAK_ADMIN_PASSWORD=password
+      - KEYCLOAK_PROXY=edge
+    ports:
+      - "9001:8080"
+    networks:
+      - repo
+
+volumes:
+  postgres-data:
+  files_volume:
+  keycloak_db_data:
+    driver: local  

@@ -48,7 +48,7 @@ const router = createRouter({
 });
 
 export default function App() {
-  const { initialized } = useKeycloak();
+  const { initialized, keycloak } = useKeycloak();
 
   if (!initialized) return <div>Loading...</div>;
 
